@@ -1,29 +1,26 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-int main(void)
-{
-    int i;
-    int a[11];
-    int min, max;
-    srand((unsigned)time(NULL));
-    a[0] = rand() % 100;
-    min = max = a[0];
-    printf("%d\n", a[0]);
-    for (i = 1; i < 11; i++)
-    {
-        a[i] = rand() % 100;
-        printf("%d\n", a[i]);
-        if (a[i] > max)
-        {
-            max = a[i];
+#include<stdio.h>
+
+void main(){
+
+    int arr[] = {40,20,30,80,50,60,50};
+    int n = (sizeof(arr)/sizeof(arr[0]));
+    int max = arr[0];
+    int min = arr[0];
+
+    for (int i =0;i<n;i++){
+
+        if(max<arr[i]){
+            max = arr[i];
         }
-        else if (a[i] < min)
-        {
-            min = a[i];
+        if(min>arr[i]){
+            min = arr[i];
         }
+
     }
-    printf("Min: %d\n", min);
-    printf("Max: %d\n", max);
+
+    printf("Max = %d" , max);    
+    printf("\nMin = %d" , min);
+
     getch();
+
 }
