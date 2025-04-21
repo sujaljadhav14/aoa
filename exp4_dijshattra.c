@@ -1,88 +1,69 @@
 #include <stdio.h>
-#include <conio.h> // For getch()
-#define INFINITY 9999
-#define MAX 10
-void Dijkstra(int Graph[MAX][MAX], int n, int start);
-int main()
+#include <limits.h>
+
+#define V 5 // Number of vertices
+
+int minDistance(int dist[], int visited[])
 {
-    int Graph[MAX][MAX], n, edges, u, v, w, start;
-    // Input: Number of vertices
-    printf("Enter number of vertices: ");
-    scanf("%d", &n);
-    // Initialize Graph with 0
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < n; j++)
-            Graph[i][j] = 0;
-    // Input: Number of edges
-    printf("Enter number of edges: ");
-    scanf("%d", &edges);
-    // Input: Graph edges
-    for (int i = 0; i < edges; i++)
+    int min = INT_MAX, min_index;
+
+    for (int v = 0; v < V; v++)
     {
-        printf("Enter edge (start vertex, end vertex, weight): ");
-        scanf("%d %d %d", &u, &v, &w);
-        Graph[u][v] = w;
-        Graph[v][u] = w; // Assuming an undirected graph
-    }
-    // Input: Starting node for Dijkstra
-    printf("Enter starting node: ");
-    scanf("%d", &start);
-    // Run Dijkstra's Algorithm
-    Dijkstra(Graph, n, start);
-    getch(); // Keeps CMD open until a key is pressed
-    return 0;
-}
-// Dijkstra’s Algorithm
-void Dijkstra(int Graph[MAX][MAX], int n, int start)
-{
-    int cost[MAX][MAX], distance[MAX], pred[MAX];
-    int visited[MAX], count, mindistance, nextnode, i, j;
-    // Initialize cost matrix
-    for (i = 0; i < n; i++)
-    {
-        for (j = 0; j < n; j++)
+        if (!visited[v] && dist[v] <= min)
         {
-            if (Graph[i][j] == 0)
-                cost[i][j] = INFINITY;
-            else
-                cost[i][j] = Graph[i][j];
+            min = dist[v];
+            min_index = v;
         }
     }
-    // Initialize distances and visited array
-    for (i = 0; i < n; i++)
+
+    return min_index;
+}
+
+void dijkstra(int graph[V][V], int src)
+{
+    int dist[V];    // Shortest distance from src to i
+    int visited[V]; // True if vertex is included in shortest path
+
+    for (int i = 0; i < V; i++)
     {
-        distance[i] = cost[start][i];
-        pred[i] = start;
+        dist[i] = INT_MAX;
         visited[i] = 0;
     }
-    distance[start] = 0;
-    visited[start] = 1;
-    count = 1;
-    while (count < n - 1)
+
+    dist[src] = 0;
+
+    for (int count = 0; count < V - 1; count++)
     {
-        mindistance = INFINITY;
-        // Find the next closest node
-        for (i = 0; i < n; i++)
-            if (distance[i] < mindistance && !visited[i])
+        int u = minDistance(dist, visited);
+        visited[u] = 1;
+
+        for (int v = 0; v < V; v++)
+        {
+            if (!visited[v] && graph[u][v] && dist[u] != INT_MAX &&
+                dist[u] + graph[u][v] < dist[v])
             {
-                mindistance = distance[i];
-                nextnode = i;
+                dist[v] = dist[u] + graph[u][v];
             }
-        visited[nextnode] = 1;
-        // Update distances of adjacent nodes
-        for (i = 0; i < n; i++)
-            if (!visited[i] && cost[nextnode][i] != INFINITY)
-                if (mindistance + cost[nextnode][i] < distance[i])
-                {
-                    distance[i] = mindistance + cost[nextnode][i];
-                    pred[i] = nextnode;
-                }
-        count++;
+        }
     }
-    // Print the shortest path from the source node
-    printf("\nVertex\tDistance from Source\n");
-    for (i = 0; i < n; i++)
+
+    printf("Vertex \t Distance from Source %d\n", src);
+    for (int i = 0; i < V; i++)
     {
-        printf("%d\t%d\n", i, distance[i]);
+        printf("%d \t\t %d\n", i, dist[i]);
     }
+}
+
+int main()
+{
+    int graph[V][V] = {
+        {0, 10, 0, 0, 5},
+        {0, 0, 1, 0, 2},
+        {0, 0, 0, 4, 0},
+        {7, 0, 6, 0, 0},
+        {0, 3, 9, 2, 0}};
+
+    dijkstra(graph, 0); // Start from vertex 0
+
+    return 0;
 }
